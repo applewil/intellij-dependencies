@@ -6,6 +6,8 @@ shopt -s globstar
 SUBSTITUTE_TOKEN=___-_-_-___
 REPOSITORY_DIR=$(realpath dependencies)
 rm -rf $REPOSITORY_DIR
+# ================================================= Remove empty poms ==================================================
+find -name "*.pom" -size 0 -print -delete
 # ================================================= Add .gradle files ==================================================
 for fileName in .gradle/caches/modules-2/files-2.1/**/*.{jar,zip}
 do
@@ -113,5 +115,5 @@ do cp $fileName $REPOSITORY_DIR; done
 cd $REPOSITORY_DIR
 curl -LO https://corretto.aws/downloads/latest/amazon-corretto-11-x64-linux-jdk.tar.gz
 curl -LO https://corretto.aws/downloads/latest/amazon-corretto-8-x64-linux-jdk.tar.gz
-curl -LO https://downloads.apache.org/ant/binaries/apache-ant-1.10.8-bin.tar.gz
+curl -LO https://downloads.apache.org/ant/binaries/apache-ant-1.10.9-bin.tar.gz
 curl -LO https://services.gradle.org/distributions/gradle-5.5-all.zip
