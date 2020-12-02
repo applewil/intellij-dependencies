@@ -17,12 +17,12 @@ do
   packaging=$(echo $fileName | awk -F '.' '{print $NF}')
   pom=$(echo $fileName | cut -d'/' -f -7 | xargs -I {} find "{}" | grep .pom)
   classifier=$(echo $fileName | rev | cut -f -1 -d '/' | cut -f 2- -d '.' |rev | sed "s/$artifactId//g" | sed "s/$version//g" | sed "s/-//g")
-  artifactIdNoSpaces=${artifactId/ /$SUBSTITUTE_TOKEN}
+  # artifactIdNoSpaces=${artifactId/ /$SUBSTITUTE_TOKEN}
   mvn install:install-file -DlocalRepositoryPath=$REPOSITORY_DIR \
                            -Dfile="$fileName" \
                            -DpomFile="$pom" \
                            -DgroupId=$groupId \
-                           -DartifactId=$artifactIdNoSpaces \
+                           -DartifactId=$artifactId \
                            -Dversion=$version \
                            -Dclassifier=$classifier \
                            -Dpackaging=$packaging \
@@ -30,9 +30,9 @@ do
                            -DcreateChecksum=true
 done
 # ======================================== Replace substitute token with spaces ========================================
-find $REPOSITORY_DIR -type f -exec sed -i "s/$SUBSTITUTE_TOKEN/ /g" {} \;
-for fileName in $REPOSITORY_DIR/**/*$SUBSTITUTE_TOKEN*/; do mv $fileName "${fileName//$SUBSTITUTE_TOKEN/ }"; done
-for fileName in $REPOSITORY_DIR/**/*$SUBSTITUTE_TOKEN*; do mv "$fileName" "${fileName//$SUBSTITUTE_TOKEN/ }"; done
+#find $REPOSITORY_DIR -type f -exec sed -i "s/$SUBSTITUTE_TOKEN/ /g" {} \;
+#for fileName in $REPOSITORY_DIR/**/*$SUBSTITUTE_TOKEN*/; do mv $fileName "${fileName//$SUBSTITUTE_TOKEN/ }"; done
+#for fileName in $REPOSITORY_DIR/**/*$SUBSTITUTE_TOKEN*; do mv "$fileName" "${fileName//$SUBSTITUTE_TOKEN/ }"; done
 # ============================================== Add .gradle parent poms ===============================================
 for fileName in .gradle/caches/modules-2/files-2.1/**/*.pom
 do
@@ -113,7 +113,8 @@ for fileName in .other/**/*.tar.gz
 do cp $fileName $REPOSITORY_DIR; done
 # ============================================ Add misc dependencies ===================================================
 cd $REPOSITORY_DIR
+mkdir -p org/apache/maven/resolver/maven-resolver-ant-tasks/1.2.1
+curl -Lo org/apache/maven/resolver/maven-resolver-ant-tasks/1.2.1/maven-resolver-ant-tasks-1.2.1-uber.jar https://repo1.maven.org/maven2/org/apache/maven/resolver/maven-resolver-ant-tasks/1.2.1/maven-resolver-ant-tasks-1.2.1-uber.jar
 curl -LO https://corretto.aws/downloads/latest/amazon-corretto-11-x64-linux-jdk.tar.gz
-curl -LO https://corretto.aws/downloads/latest/amazon-corretto-8-x64-linux-jdk.tar.gz
 curl -LO https://downloads.apache.org/ant/binaries/apache-ant-1.10.9-bin.tar.gz
 curl -LO https://services.gradle.org/distributions/gradle-5.5-all.zip
